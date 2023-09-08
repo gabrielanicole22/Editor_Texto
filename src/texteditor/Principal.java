@@ -16,14 +16,15 @@ import javax.swing.text.StyledDocument;
  * @author Gabriela Mejía - David Zelaya - Miguel Medrano
  */
 public class Principal extends javax.swing.JFrame {
-
+    StyledDocument documento;
+    Style estilo;
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
-        documento = tp_texto.getStyledDocument();
-        estilo = tp_texto.addStyle("miEstilo", null);
+        documento = texto.getStyledDocument();
+        estilo = texto.addStyle("miEstilo", null);
 
         DefaultComboBoxModel modelo = (DefaultComboBoxModel) combobox_fuentes.getModel();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -44,20 +45,20 @@ public class Principal extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tp_texto = new javax.swing.JTextPane();
+        texto = new javax.swing.JTextPane();
         jToolBar1 = new javax.swing.JToolBar();
         combobox_fuentes = new javax.swing.JComboBox<>();
         combobox_tamaño = new javax.swing.JComboBox<>();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jButton1 = new javax.swing.JButton();
+        cambiarColor = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Editor Texto");
 
-        tp_texto.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        jScrollPane1.setViewportView(tp_texto);
+        texto.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        jScrollPane1.setViewportView(texto);
 
         jToolBar1.setRollover(true);
 
@@ -78,16 +79,16 @@ public class Principal extends javax.swing.JFrame {
         jToolBar1.add(jSeparator2);
         jToolBar1.add(jSeparator1);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/texteditor/letra.png"))); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        cambiarColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/texteditor/letra.png"))); // NOI18N
+        cambiarColor.setFocusable(false);
+        cambiarColor.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cambiarColor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        cambiarColor.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                cambiarColorMouseClicked(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        jToolBar1.add(cambiarColor);
 
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -130,41 +131,38 @@ public class Principal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void cambiarColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cambiarColorMouseClicked
         // TODO add your handling code here:
         try {
-
-            StyleConstants.setForeground(estilo,
-                    JColorChooser.showDialog(this,
-                            "Seleccione Color", Color.red)
+            StyleConstants.setForeground(estilo,JColorChooser.showDialog(this,"Seleccione Color", Color.red)
             );
 
-            documento.setCharacterAttributes(tp_texto.getSelectionStart(),
-                    tp_texto.getSelectionEnd() - tp_texto.getSelectionStart(),
-                    tp_texto.getStyle("miEstilo"),
+            documento.setCharacterAttributes(texto.getSelectionStart(),
+                    texto.getSelectionEnd() - texto.getSelectionStart(),
+                    texto.getStyle("miEstilo"),
                     true);
         } catch (Exception ex) {
         }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_cambiarColorMouseClicked
 
     private void combobox_tamañoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combobox_tamañoActionPerformed
         // TODO add your handling code here:
         StyleConstants.setFontSize(estilo, Integer.parseInt(combobox_tamaño.getSelectedItem().toString()));
-        documento.setCharacterAttributes(tp_texto.getSelectionStart(),
-                tp_texto.getSelectionEnd() - tp_texto.getSelectionStart(),
-                tp_texto.getStyle("miEstilo"),
+        documento.setCharacterAttributes(texto.getSelectionStart(),
+                texto.getSelectionEnd() - texto.getSelectionStart(),
+                texto.getStyle("miEstilo"),
                 true);
     }//GEN-LAST:event_combobox_tamañoActionPerformed
 
     private void combobox_fuentesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combobox_fuentesItemStateChanged
         // TODO add your handling code here:
         StyleConstants.setFontFamily(estilo, combobox_fuentes.getSelectedItem().toString());
-        //StyleConstants.setFontSize(estilo, Integer.parseInt(cb_tamaño.getSelectedItem().toString()));
-        documento.setCharacterAttributes(tp_texto.getSelectionStart(),
-                tp_texto.getSelectionEnd() - tp_texto.getSelectionStart(),
-                tp_texto.getStyle("miEstilo"),
+        documento.setCharacterAttributes(texto.getSelectionStart(),
+                texto.getSelectionEnd() - texto.getSelectionStart(),
+                texto.getStyle("miEstilo"),
                 true);
     }//GEN-LAST:event_combobox_fuentesItemStateChanged
+    
     public void Escribir(String mensaje) {
         File nose = new File("src/hi/hola.txt");
 
@@ -178,7 +176,7 @@ public class Principal extends javax.swing.JFrame {
     }
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        Escribir(tp_texto.getStyle("miEstilo").toString());
+        Escribir(texto.getText()+" "+texto.getStyle("miEstilo").toString());
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
@@ -218,16 +216,13 @@ public class Principal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton cambiarColor;
     private javax.swing.JComboBox<String> combobox_fuentes;
     private javax.swing.JComboBox<String> combobox_tamaño;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JTextPane tp_texto;
+    private javax.swing.JTextPane texto;
     // End of variables declaration//GEN-END:variables
-
-    StyledDocument documento;
-    Style estilo;
 }
