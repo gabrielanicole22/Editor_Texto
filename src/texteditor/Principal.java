@@ -17,20 +17,26 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Gabriela Mejía - David Zelaya - Miguel Medrano
  */
 public class Principal extends javax.swing.JFrame {
+
     StyledDocument documento;
     Style estilo;
+
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
-        documento = texto.getStyledDocument();
-        estilo = texto.addStyle("miEstilo", null);
+        Color backgroundColor = new Color(119, 110, 147);
+        getContentPane().setBackground(backgroundColor);
+        documento = taylorSwiftTextArea.getStyledDocument();
+        estilo = taylorSwiftTextArea.addStyle("miEstilo", null);
 
         DefaultComboBoxModel modelo = (DefaultComboBoxModel) combobox_fuentes.getModel();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -51,7 +57,7 @@ public class Principal extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        texto = new javax.swing.JTextPane();
+        taylorSwiftTextArea = new javax.swing.JTextPane();
         jToolBar1 = new javax.swing.JToolBar();
         combobox_fuentes = new javax.swing.JComboBox<>();
         combobox_tamaño = new javax.swing.JComboBox<>();
@@ -62,8 +68,8 @@ public class Principal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Editor Texto");
 
-        texto.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        jScrollPane1.setViewportView(texto);
+        taylorSwiftTextArea.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        jScrollPane1.setViewportView(taylorSwiftTextArea);
 
         jToolBar1.setRollover(true);
 
@@ -93,6 +99,7 @@ public class Principal extends javax.swing.JFrame {
         });
         jToolBar1.add(cambiarColor);
 
+        btnGuardar.setBackground(new java.awt.Color(255, 204, 255));
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,6 +107,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        btnAbrir.setBackground(new java.awt.Color(255, 204, 255));
         btnAbrir.setText("Abrir");
         btnAbrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -147,11 +155,11 @@ public class Principal extends javax.swing.JFrame {
     private void cambiarColorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cambiarColorMouseClicked
         // TODO add your handling code here:
         try {
-            StyleConstants.setForeground(estilo,JColorChooser.showDialog(this,"Seleccione Color", Color.red)
+            StyleConstants.setForeground(estilo, JColorChooser.showDialog(this, "Seleccione Color", Color.red)
             );
-            documento.setCharacterAttributes(texto.getSelectionStart(),
-                    texto.getSelectionEnd() - texto.getSelectionStart(),
-                    texto.getStyle("miEstilo"),
+            documento.setCharacterAttributes(taylorSwiftTextArea.getSelectionStart(),
+                    taylorSwiftTextArea.getSelectionEnd() - taylorSwiftTextArea.getSelectionStart(),
+                    taylorSwiftTextArea.getStyle("miEstilo"),
                     true);
         } catch (Exception ex) {
         }
@@ -160,21 +168,22 @@ public class Principal extends javax.swing.JFrame {
     private void combobox_tamañoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combobox_tamañoActionPerformed
         // TODO add your handling code here:
         StyleConstants.setFontSize(estilo, Integer.parseInt(combobox_tamaño.getSelectedItem().toString()));
-        documento.setCharacterAttributes(texto.getSelectionStart(),
-                texto.getSelectionEnd() - texto.getSelectionStart(),
-                texto.getStyle("miEstilo"),
+        documento.setCharacterAttributes(taylorSwiftTextArea.getSelectionStart(),
+                taylorSwiftTextArea.getSelectionEnd() - taylorSwiftTextArea.getSelectionStart(),
+                taylorSwiftTextArea.getStyle("miEstilo"),
                 true);
     }//GEN-LAST:event_combobox_tamañoActionPerformed
 
     private void combobox_fuentesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combobox_fuentesItemStateChanged
         // TODO add your handling code here:
         StyleConstants.setFontFamily(estilo, combobox_fuentes.getSelectedItem().toString());
-        documento.setCharacterAttributes(texto.getSelectionStart(),
-                texto.getSelectionEnd() - texto.getSelectionStart(),
-                texto.getStyle("miEstilo"),
+        documento.setCharacterAttributes(taylorSwiftTextArea.getSelectionStart(),
+                taylorSwiftTextArea.getSelectionEnd() - taylorSwiftTextArea.getSelectionStart(),
+                taylorSwiftTextArea.getStyle("miEstilo"),
                 true);
     }//GEN-LAST:event_combobox_fuentesItemStateChanged
-    
+
+    //prueba
     public void Escribir(String mensaje) {
         File nose = new File("src/hi/hola.txt");
 
@@ -186,16 +195,16 @@ public class Principal extends javax.swing.JFrame {
             System.out.println("Error");
         }
     }
-    public void guardarArchivoConFormato(String mensaje) {
-        EstiloTexto estiloTexto = new EstiloTexto(
-            mensaje,
-            StyleConstants.getFontFamily(estilo),
-            StyleConstants.getFontSize(estilo),
-            StyleConstants.getForeground(estilo)
-        );
 
+    public void guardarArchivoConFormato(String mensaje, String name) {
+        EstiloTexto estiloTexto = new EstiloTexto(
+                mensaje,
+                StyleConstants.getFontFamily(estilo),
+                StyleConstants.getFontSize(estilo),
+                StyleConstants.getForeground(estilo)
+        );
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/hi/hola.txt"));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/hi/" + name + ".txt"));
             oos.writeObject(estiloTexto);
             oos.close();
         } catch (IOException e) {
@@ -205,35 +214,38 @@ public class Principal extends javax.swing.JFrame {
 
     // Método para cargar el archivo con formato
     public void cargarArchivoConFormato(String nose) {
-        if(nose!=null){
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nose));
-            EstiloTexto estiloTexto = (EstiloTexto) ois.readObject();
-            ois.close();
+        if (nose != null) {
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nose));
+                EstiloTexto estiloTexto = (EstiloTexto) ois.readObject();
+                ois.close();
 
-            // Aplica el formato cargado al JTextPane
-            texto.setText(estiloTexto.getTexto());
-            StyleConstants.setFontFamily(estilo, estiloTexto.getFuente());
-            StyleConstants.setFontSize(estilo, estiloTexto.getTamaño());
-            StyleConstants.setForeground(estilo, estiloTexto.getColor());
-            documento.setCharacterAttributes(0, texto.getText().length(), texto.getStyle("miEstilo"), true);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+                // Aplica el formato cargado al JTextPane
+                taylorSwiftTextArea.setText(estiloTexto.getTexto());
+                StyleConstants.setFontFamily(estilo, estiloTexto.getFuente());
+                StyleConstants.setFontSize(estilo, estiloTexto.getTamaño());
+                StyleConstants.setForeground(estilo, estiloTexto.getColor());
+                documento.setCharacterAttributes(0, taylorSwiftTextArea.getText().length(), taylorSwiftTextArea.getStyle("miEstilo"), true);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
-    
-    
+
+
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         //Escribir(texto.getText() + " " + texto.getStyle("miEstilo").toString());
-        guardarArchivoConFormato(texto.getText());
+        String hona = JOptionPane.showInputDialog("Ingrese el nombre del archivo que desee guardar");
+        if (hona != null) {
+            guardarArchivoConFormato(taylorSwiftTextArea.getText(), hona);
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private String abrirArchivo() {
         JFileChooser fileChooser = new JFileChooser();
         String hola;
-        
+
         // Configura el JFileChooser para que solo permita seleccionar archivos de texto (*.txt)
         fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             @Override
@@ -260,7 +272,6 @@ public class Principal extends javax.swing.JFrame {
                 while ((linea = br.readLine()) != null) {
                     contenido.append(linea).append("\n");
                 }
-
                 // Establece el contenido del JTextPane con el contenido del archivo
                 //texto.setText(contenido.toString());
                 return archivoSeleccionado.getAbsolutePath();
@@ -319,6 +330,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> combobox_tamaño;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JTextPane texto;
+    private javax.swing.JTextPane taylorSwiftTextArea;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,9 +4,11 @@
  */
 package editortexto_lab;
 
+import texteditor.Principal;
+
 /**
  *
- * @author User
+ * @author Gabriela Mejia
  */
 public class EditorTexto_Lab {
 
@@ -15,6 +17,7 @@ public class EditorTexto_Lab {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        new Principal().setVisible(true);
     }
     
 }
