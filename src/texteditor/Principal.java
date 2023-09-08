@@ -12,7 +12,11 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.JFileChooser;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 /**
  *
  * @author Gabriela Mejía - David Zelaya - Miguel Medrano
@@ -51,8 +55,6 @@ public class Principal extends javax.swing.JFrame {
         jToolBar1 = new javax.swing.JToolBar();
         combobox_fuentes = new javax.swing.JComboBox<>();
         combobox_tamaño = new javax.swing.JComboBox<>();
-        jSeparator2 = new javax.swing.JToolBar.Separator();
-        jSeparator1 = new javax.swing.JToolBar.Separator();
         cambiarColor = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
         btnAbrir = new javax.swing.JButton();
@@ -79,8 +81,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(combobox_tamaño);
-        jToolBar1.add(jSeparator2);
-        jToolBar1.add(jSeparator1);
 
         cambiarColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/texteditor/letra.png"))); // NOI18N
         cambiarColor.setFocusable(false);
@@ -149,7 +149,6 @@ public class Principal extends javax.swing.JFrame {
         try {
             StyleConstants.setForeground(estilo,JColorChooser.showDialog(this,"Seleccione Color", Color.red)
             );
-
             documento.setCharacterAttributes(texto.getSelectionStart(),
                     texto.getSelectionEnd() - texto.getSelectionStart(),
                     texto.getStyle("miEstilo"),
@@ -187,14 +186,54 @@ public class Principal extends javax.swing.JFrame {
             System.out.println("Error");
         }
     }
+    public void guardarArchivoConFormato(String mensaje) {
+        EstiloTexto estiloTexto = new EstiloTexto(
+            mensaje,
+            StyleConstants.getFontFamily(estilo),
+            StyleConstants.getFontSize(estilo),
+            StyleConstants.getForeground(estilo)
+        );
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/hi/hola.txt"));
+            oos.writeObject(estiloTexto);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para cargar el archivo con formato
+    public void cargarArchivoConFormato(String nose) {
+        if(nose!=null){
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nose));
+            EstiloTexto estiloTexto = (EstiloTexto) ois.readObject();
+            ois.close();
+
+            // Aplica el formato cargado al JTextPane
+            texto.setText(estiloTexto.getTexto());
+            StyleConstants.setFontFamily(estilo, estiloTexto.getFuente());
+            StyleConstants.setFontSize(estilo, estiloTexto.getTamaño());
+            StyleConstants.setForeground(estilo, estiloTexto.getColor());
+            documento.setCharacterAttributes(0, texto.getText().length(), texto.getStyle("miEstilo"), true);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        }
+    }
+    
+    
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        Escribir(texto.getText() + " " + texto.getStyle("miEstilo").toString());
+        //Escribir(texto.getText() + " " + texto.getStyle("miEstilo").toString());
+        guardarArchivoConFormato(texto.getText());
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    private void abrirArchivo() {
+    private String abrirArchivo() {
         JFileChooser fileChooser = new JFileChooser();
-
+        String hola;
+        
         // Configura el JFileChooser para que solo permita seleccionar archivos de texto (*.txt)
         fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             @Override
@@ -223,17 +262,18 @@ public class Principal extends javax.swing.JFrame {
                 }
 
                 // Establece el contenido del JTextPane con el contenido del archivo
-                texto.setText(contenido.toString());
+                //texto.setText(contenido.toString());
+                return archivoSeleccionado.getAbsolutePath();
 
-                br.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
         // TODO add your handling code here:
-        abrirArchivo();
+        cargarArchivoConFormato(abrirArchivo());
     }//GEN-LAST:event_btnAbrirActionPerformed
 
     /**
@@ -278,8 +318,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> combobox_fuentes;
     private javax.swing.JComboBox<String> combobox_tamaño;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTextPane texto;
     // End of variables declaration//GEN-END:variables
