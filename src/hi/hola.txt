@@ -1,1 +1,1 @@
-NamedStyle:miEstilo {name=miEstilo,family=Agency FB,}
+holaap NamedStyle:miEstilo {name=miEstilo,family=Barlow Condensed Medium,size=60,foreground=java.awt.Color[r=102,g=255,b=102],}
